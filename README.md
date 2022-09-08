@@ -7,21 +7,29 @@ GitHub Actions self-hosted runner on VirtualBox with Vagrant.
 - [actions/runner](https://github.com/actions/runner): The Runner for GitHub Actions
 - [actions/virtual-environments](https://github.com/actions/virtual-environments): GitHub Actions virtual environments
 
-
 ## Getting Started
 
 ```sh
+# clone and start vm
 git clone https://github.com/peaceiris/actions-self-hosted-runners.git
 cd ./actions-self-hosted-runners/images/ubuntu-20.04
 vim .env
 make up
+# enter vm and become root
 vagrant ssh
-cd actions-runner
+sudo bash
+cd ~/actions-runner
+# setup actions runner
+export RUNNER_ALLOW_RUNASROOT=1
 ./config.sh --url https://github.com/[owner]/[repo] --token [token]
 nohup ./run.sh &
 ```
 
-Create `.env` file as follows.
+We're running as root so that GitHub Actions Runner can clean up old Docker files, otherwise [there are permission errors](https://github.com/actions/runner/issues/434).
+
+Create `.env` file as follows, find GitHub Actions Runner versions here:
+
+https://github.com/actions/runner/releases
 
 ```rb
 GHA_RUNNER_VERSION = 'x.xxx.x'
